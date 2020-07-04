@@ -11,6 +11,12 @@ def main():
 if __name__ == '__main__':
     main()
 
+def reduce_loc(zones_dataframe):
+    zone_list = zones_dataframe['Id'].tolist()
+    colnames = []
+    for x in zone_list:
+        colnames.append(str(x))
+    return data.loc[zone_list,colnames].head()
 
 def df_item_to_id(aList, df):
     id_list = []
