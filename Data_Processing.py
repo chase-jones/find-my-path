@@ -23,7 +23,7 @@ def df_item_to_id(aList, df):
 def df_id_to_zone(aList, df):
     zone_list = []
     for item in aList:
-        zone_list.append(df.loc[df['Description'] == item, 'Zone'].values[0])
+        zone_list.append(df.loc[df['Description'] == item, 'Zone Number'].values[0])
     result = pd.DataFrame(zone_list, columns=['Zone'])
     return result
 
