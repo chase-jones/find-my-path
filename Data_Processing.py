@@ -2,6 +2,10 @@ import pandas as pd
 import numpy as np
 
 
+def init(bigdf):
+    pass
+
+
 def main():
     df_grocery_list = pd.read_csv('100 Random Rows.csv')
     df_big_matrix = pd.read_csv('Distance Data Pivot.csv')
@@ -20,12 +24,12 @@ def df_item_to_id(aList, df):
     return res
 
 
-def df_idtozone(aList,df): # includes entrance and exit in zone list
+def df_idtozone(aList, df):  # includes entrance and exit in zone list
     zone_list = [-1]
     for item in aList:
         zone_list.append(df.loc[df['Description'] == item, 'Zone Number'].values[0])
     zone_list.append(999999999)
-    result=pd.DataFrame(zone_list,columns =['Zone'])
+    result = pd.DataFrame(zone_list, columns=['Zone'])
     return result
 
 
@@ -49,9 +53,12 @@ def get_ordered_id_list(df_list_ids_and_zones, df_ordered_zones):
             i += 1
     return output_df
 
-def reduce_loc(zones_dataframe):
+
+def reduce_loc(zones_dataframe, data):
     zone_list = zones_dataframe['Zone'].tolist()
     colnames = []
     for x in zone_list:
         colnames.append(str(x))
-    return data.loc[zone_list,colnames].head()
+    df1 = data[colnames]
+    df2 = df1[df1.index.isin(zone_list)]
+    return df2
