@@ -16,7 +16,7 @@ if __name__ == '__main__':
     main()
 
 
-def df_item_to_id(aList, df):
+def df_item_to_id(aList, df): # used to build sol dataframe
     id_list = []
     for item in aList:
         id_list.append(df.loc[df['Description'] == item, 'Id'].values[0])
@@ -24,18 +24,25 @@ def df_item_to_id(aList, df):
     return res
 
 
-def df_idtozone(aList, df):  # includes entrance and exit in zone list
+def df_idtozone(aList, df):  # used to build sol dataframe
+    zone_list = []
+    for item in aList:
+        zone_list.append(df.loc[df['Description'] == item, 'Zone Number'].values[0])
+    result = pd.DataFrame(zone_list, columns=['Zone'])
+    return result
+
+def df_idtozone_withenterexit(aList,df): # used to build the matrix needed for the OR solver
     zone_list = [-1]
     for item in aList:
         zone_list.append(df.loc[df['Description'] == item, 'Zone Number'].values[0])
     zone_list.append(999999999)
-    result = pd.DataFrame(zone_list, columns=['Zone'])
+    result=pd.DataFrame(zone_list,columns =['Zone'])
     return result
 
-
-def df_id_zone_combine(df1, df2):
+def df_id_zone_combine(df1, df2): # builds sol dataframe with description, id, and zone
     # merge both data frames
-    frames = [df1, df2]
+    desc = pd.DataFrame(myGroceryList,columns=['Description'])
+    frames=[desc,df1,df2]
     df_f = pd.concat(frames, axis=1)
     return df_f
 
@@ -62,3 +69,10 @@ def reduce_loc(zones_dataframe, data):
     df1 = data[colnames]
     df2 = df1[df1.index.isin(zone_list)]
     return df2
+
+def get_singledesc(df_list_ids_and_zones, value): # takes in a zone, returns a list of items needed from that zone
+    temp_series = df_list_ids_and_zones.loc[df_list_ids_and_zones['Zone'] == value, 'Description'] #.item()
+    result = []
+    for index, value in temp_series.items():
+        result.append(value)
+    return result
