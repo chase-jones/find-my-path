@@ -27,45 +27,29 @@ def df_idtozone(aList,df): # modified to include entrance and exit in zone list
     return result
 
 def df_idzone(df1,df2):
-#merge both data frames
+    # merge both data frames
     frames=[df1,df2]
     df_f = pd.concat(frames,axis=1)
     return df_f
 
-t1=df_itemtoid(myGroceryList,df_test)
-t2=df_idtozone(myGroceryList,df_test)
-sol=df_idzone(t1,t2)
-
-#  sofia code - reduce matrix
-data = pd.read_csv('C:/Users/satzr/Desktop/Senior Design/GoogleTSPwithClasses/Zone Distanced Pivoted.csv', index_col=0)
-
-# alternative code if we would prefer to append the entrance/exit outside of nicole's function
-# method 1: t2 = t2.append({'Zone': 999999999}, ignore_index=True) # adds checkout 'zone' to the end of the matrix
-# method 2: t2.loc[len(t2)] = 999999999
-# # lines 1, 2, 3 below add entrance 'zone' to the beginning of the matrix
-# t2.loc[-1] = [-1] # [1]
-# t2.index = t2.index + 1 # [2]
-# t2 = t2.sort_index() # [3]
-
-# print('after appending enter/exit',t2)
-
-def reduce_loc(zones_dataframe):
+def reduce_loc(zones_dataframe, data):
     zone_list = zones_dataframe['Zone'].tolist()
     colnames = []
     for x in zone_list:
         colnames.append(str(x))
-    return data.loc[zone_list,colnames].head()
+    df1 = data[colnames]
+    df2 = df1[df1.index.isin(zone_list)]
+    return df2
 
-solver_distmx = reduce_loc(t2)
-print(solver_distmx)
+t2=df_idtozone(myGroceryList,df_test)
 
-### TSP SOLVER ###
-# this version uses the sample CSV_Nicole
-s_distmx = pd.read_csv('C:/Users/satzr/Desktop/Senior Design/GoogleTSPwithClasses/CSV_Nicole.csv', index_col=0, encoding='latin-1', engine='python')
+#  initialize zone pivot data
+data = pd.read_csv('C:/Users/satzr/Desktop/Senior Design/GoogleTSPwithClasses/Zone Distanced Pivoted.csv', index_col=0)
+
+s_distmx = reduce_loc(t2, data)
 solver_distmx = s_distmx.values.tolist()
 
 def create_data_model():
-    """Stores the data for the problem."""
     data = {}
     data['distance_matrix'] = solver_distmx # to solve the problem we use the solver_distmx in list form
     data['num_vehicles'] = 1
@@ -74,7 +58,6 @@ def create_data_model():
     return data
 
 def print_solution(data, manager, routing, solution):
-    """Prints solution on console."""
     index = routing.Start(0)
     plan_output = 'Building route for customer list...\n'
     route_distance = 0
@@ -93,7 +76,7 @@ def print_solution(data, manager, routing, solution):
     listoutput.append(s_distmx.columns[index])
     for i in range(len(listoutput)):
         listoutput[i] = int(listoutput[i])
-    plan_output += '\n Distance of the route: {}m\n'.format(route_distance)
+    plan_output += '\n Distance of the route: {}m\n'.format(route_distance) # route_distance is an integer
     print(plan_output)
     print(listoutput)
 
