@@ -33,7 +33,15 @@ def get_walkable_matrix(pixel_matrix):
 # Read image in, store as 3D pixel matrix.
 # Convert matrix into one where each entry is whether that spot on the floor floorplan
 # is walkable or not.
-pixel_matrix = imageio.imread('Floorplan.png')
 
-walk_dataframe = pd.DataFrame(get_walkable_matrix(pixel_matrix))
-print(walk_dataframe)
+def picture_to_df(csv_path):
+    pixel_matrix = imageio.imread(csv_path)
+    return pd.DataFrame(get_walkable_matrix(pixel_matrix))
+
+def main():
+    pass
+
+
+if __name__ == "__main__":
+    main()
+
