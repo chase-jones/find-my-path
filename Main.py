@@ -2,12 +2,11 @@ import pandas as pd
 import numpy as np
 # import Image_Processing as ip
 # import CplexOR as cor
+import GoogleOR as gor
 import Data_Processing as dp
 import os
 
-
 def main():
-
     df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
     df_full_sku_list = pd.read_csv('New Full SKU List.csv')
     array_all_shopping_carts = load_shopping_cart_list("Shopping Carts")
@@ -17,7 +16,8 @@ def main():
         df = dp.df_id_to_zone_with_enter_exit(cart, df_full_sku_list)
         array_all_reduced_dfs.append(dp.reduce_loc(df, df_zone_pivot))
 
-
+    for df in array_all_reduced_dfs:
+        gor.solve_tsp(df)
     # print(len(all_shopping_carts_array))
 
 def load_shopping_cart_list(shopping_cart_folder):
@@ -27,12 +27,10 @@ def load_shopping_cart_list(shopping_cart_folder):
             a1.append(load_shopping_cart((shopping_cart_folder + '/' + filename)))
     return a1
 
-
 def load_shopping_cart(shopping_cart_path):
     df = pd.read_csv(shopping_cart_path, header=None)
     df.columns = ['Id']
     return df
-
 
 def main2():
     image_df = pd.read_csv('Image_df.csv', index_col=0)
