@@ -5,10 +5,12 @@ import Image_Processing as ip
 
 
 def main():
-    image_df = ip.read_image("Test Maze.png")
-    all_combos = all_pixel_combos(image_df)
-    all_combos_2 = all_combos.drop_duplicates()
+    image_df = pd.read_csv('Image_df.csv',index_col=0)
 
+    all_combos = all_pixel_combos(image_df)
+    all_combos.describe()
+    all_combos_2 = all_combos.drop_duplicates()
+    all_combos_2.describe()
     pass
     # df_zone = pd.read_csv('ZoneList.csv')
     # df_all = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
@@ -23,13 +25,11 @@ def all_pixel_combos(image_df):
     # Sort by
     for col in image_df.columns:
         for row in image_df.index:
-            new_row = {'X': row, 'Y': col}
-            already_checked = already_checked.append(new_row, ignore_index=True)
-
-            for col1 in image_df.columns:
+            for col2 in image_df.columns:
                 for row2 in image_df.index:
-                    pass #placeholder
-
+                    if image_df.loc[row, col] != 0 and image_df.loc[row2, col2] != 0:
+                        new_row = {'X1': row, 'Y1': col, 'X2': row2, 'Y2': col2}
+                        combination_df = combination_df.append(new_row, ignore_index=True)
 
     return combination_df
 
