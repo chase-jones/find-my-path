@@ -11,14 +11,14 @@ import pyomo.environ as pyEnv
 def main():
     cost_matrix=pd.read_csv('/Users/nicolenarvaez/Downloads/CSV_Nicole.csv')
     print(cost_matrix)
+    print(solution(cost_matrix))
+
+def solution(cost_matrix):
     n = len(cost_matrix)
     zone_list = cost_matrix['Zone']
     c_matrix=cost_matrix.drop(columns='Zone')
     c_matrix=c_matrix.to_numpy()
-    print(c_matrix)
-    print(solution(c_matrix,n,zone_list))
 
-def solution(c_matrix,n,zone_list):
 #Model
     model = pyEnv.ConcreteModel()
 
