@@ -1,11 +1,29 @@
-import A_Star_Routing_2 as astar
 import pandas as pd
 import numpy as np
-import Image_Processing as ip
+# import Image_Processing as ip
+# import CplexOR as cor
+import os
 
 
 def main():
-    image_df = pd.read_csv('Image_df.csv',index_col=0)
+    all_shopping_carts_array = load_shopping_cart_list("Shopping Carts")
+    print(len(all_shopping_carts_array))
+
+def load_shopping_cart_list(shopping_cart_folder):
+    a1 = []
+    for filename in os.listdir(shopping_cart_folder):
+        if filename.endswith(".csv"):
+            a1.append(load_shopping_cart((shopping_cart_folder + '/' + filename)))
+    return a1
+
+
+def load_shopping_cart(shopping_cart_path):
+    df = pd.read_csv(shopping_cart_path, ignore_index = True, columns = ['Items'])
+    return df
+
+
+def main2():
+    image_df = pd.read_csv('Image_df.csv', index_col=0)
 
     all_combos = all_pixel_combos(image_df)
     all_combos.describe()

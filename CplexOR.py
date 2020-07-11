@@ -1,3 +1,8 @@
+import numpy as np
+import pandas as pd
+import time
+import pyomo.environ as pyEnv
+
 #Make sure to run this before running the whole code!!!!!!!!
 
 #export PATH=/Applications/CPLEX_Studio1210/cplex/bin/x86-64_osx:$PATH
@@ -8,9 +13,9 @@
 myGroceryList = ['milk','onions','butter','ice cream','juice','flour']
 
 
-import numpy as np
-import pandas as pd
-import time
+def main():
+    pass
+
 
 
 cost_matrix=pd.read_csv('/Users/nicolenarvaez/Downloads/CSV_Nicole.csv')
@@ -20,7 +25,7 @@ c_matrix=cost_matrix.drop(columns='Zone')
 c_matrix=c_matrix.to_numpy()
 print(c_matrix)
 
-import pyomo.environ as pyEnv
+
 
 #Model
 model = pyEnv.ConcreteModel()
@@ -154,5 +159,9 @@ print('Time:',time.process_time())
 
 #PRINTS OBJECTIVE VAL
 print('objective value:', model.objective())
+
+
+if __name__ == "__main__":
+    main()
 
 
