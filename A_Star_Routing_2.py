@@ -113,7 +113,7 @@ def main():
     end = (7, 6)
 
     path = astar(maze, start, end)
-    print(path)
+    print(path) 
 
 
 if __name__ == '__main__':
