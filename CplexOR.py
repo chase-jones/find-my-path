@@ -12,11 +12,13 @@ def main():
     cost_matrix=pd.read_csv('/Users/nicolenarvaez/Downloads/CSV_Nicole.csv')
     print(cost_matrix)
     n = len(cost_matrix)
+    zone_list = cost_matrix['Zone']
     c_matrix=cost_matrix.drop(columns='Zone')
     c_matrix=c_matrix.to_numpy()
     print(c_matrix)
+    print(solution(c_matrix,n,zone_list))
 
-def solution(c_matrix):
+def solution(c_matrix,n,zone_list):
 #Model
     model = pyEnv.ConcreteModel()
 
@@ -118,23 +120,17 @@ def solution(c_matrix):
         test[i] = test[i]-1
     print(test)
 
-    aList=list(cost_matrix['Zone'])
-    print(aList)
+
     ordered_zones=[]
     for k in test:
-        ordered_zones.append(aList[k])
+        ordered_zones.append(zone_list[k])
 
 
     ordered_zones_pd=pd.Series(ordered_zones)
     print('path: ', ordered_zones)
     return ordered_zones_pd
 
-#desired output!!!!! YAY
 
-print(solution(c_matrix))
-
-
-#OUTPUT NEEDS TO BE A PANDAS SERIES
 
 
 if __name__ == "__main__":
