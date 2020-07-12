@@ -6,29 +6,31 @@ import GoogleOR as gor
 import Data_Processing as dp
 import os
 
+
 def main():
     df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
     df_full_sku_list = pd.read_csv('New Full SKU List.csv')
     array_all_shopping_carts = load_shopping_cart_list("Shopping Carts")
-    array_all_reduced_dfs = []
-    array_all_df_id_zone_description = []
 
-    for cart in array_all_shopping_carts:
-        df = dp.df_id_to_zone_with_enter_exit(cart, df_full_sku_list)
-        array_all_reduced_dfs.append(dp.reduce_loc(df, df_zone_pivot))
+    array_cart_dictionaries = []
 
-        # t1 = dp.df_item_to_id(cart, df_full_sku_list)
-        # t2= dp.df_id_to_zone(cart,df_full_sku_list)
-        # sol= dp.df_id_zone_combine(t1,t2)
-        #
-        # array_all_df_id_zone_description.append(sol)
+    for id_df in array_all_shopping_carts:
+        df = dp.df_id_to_zone_with_enter_exit(id_df, df_full_sku_list)
+        single_cart = {
+            "Reduced df": dp.reduce_loc(df, df_zone_pivot),
+            "Id df": id_df,
+            "Reduced SKU List": dp.df_get_full_reduced_list_by_id(id_df, df_full_sku_list),
+            "Reduced df 2": dp.df_replace_zeros_with_nines(dp.reduce_loc(df, df_zone_pivot))
+        }
+        array_cart_dictionaries.append(single_cart)
 
     # # add this code back when you start to run carts full of descriptions, not ids
     # for reduced_distance_matrix, df_id_zone_desc in zip(array_all_reduced_dfs,array_all_df_id_zone_description):
     #     gor.solve_tsp(reduced_distance_matrix, df_id_zone_desc)
 
-    for arr in array_all_reduced_dfs:
-        gor.solve_tsp(arr)
+    for cart in array_cart_dictionaries:
+        gor.solve_tsp(cart.getitem("Reduced df"))
+
 
 def load_shopping_cart_list(shopping_cart_folder):
     a1 = []
@@ -37,10 +39,12 @@ def load_shopping_cart_list(shopping_cart_folder):
             a1.append(load_shopping_cart((shopping_cart_folder + '/' + filename)))
     return a1
 
+
 def load_shopping_cart(shopping_cart_path):
     df = pd.read_csv(shopping_cart_path, header=None)
     df.columns = ['Id']
     return df
+
 
 def main2():
     image_df = pd.read_csv('Image_df.csv', index_col=0)
