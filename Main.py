@@ -29,7 +29,9 @@ def main():
     #     gor.solve_tsp(reduced_distance_matrix, df_id_zone_desc)
 
     for cart in array_cart_dictionaries:
-        gor.solve_tsp(cart.getitem("Reduced df"))
+        cart.update({'Solved OR Zones': gor.solve_tsp(cart.get("Reduced df"))})
+
+
 
 
 def load_shopping_cart_list(shopping_cart_folder):
