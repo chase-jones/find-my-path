@@ -68,7 +68,10 @@ def df_id_zone_combine(list_user_input_groceries, df_id,
 
 
 def df_get_full_reduced_list_by_id(df_id, df_all_skus):
-    list_id = df_id.values.tolist()[0]
+    list_id = []
+    for item in df_id.values.tolist():
+        for id in item:
+            list_id.append(id)
     return df_all_skus[df_all_skus['Id'].isin(list_id)]
 
 
@@ -82,7 +85,7 @@ def get_ordered_id_list(df_list_ids_and_zones, df_ordered_zones):
     i = 1
     for index, value in df_ordered_zones.items():
         # Generates a series based on the current zone. Stores in temp_series
-        temp_series = df_list_ids_and_zones.loc[df_list_ids_and_zones['Zone'] == value, 'Id']
+        temp_series = df_list_ids_and_zones.loc[df_list_ids_and_zones['Zone Number'] == value, 'Id']
 
         for index, value in temp_series.items():
             new_row = {'Order_num': i, 'Item_ID': value}

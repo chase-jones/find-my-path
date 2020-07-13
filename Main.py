@@ -46,7 +46,15 @@ def main():
     #     gor.solve_tsp(reduced_distance_matrix, df_id_zone_desc)
 
     for cart in array_cart_dictionaries:
-        cart.update({'Solved OR Zones': gor.solve_tsp(cart.get("Reduced df"))})
+        cart.update({'Solved OR Zones': gor.solve_tsp(cart.get("Reduced df 2"))})
+        # Maintaining list variable so we can remove the first and last zones from the list
+        list1 = cart.get('Solved OR Zones')
+        list1.pop(len(list1) - 1)
+        list1.pop(0)
+        series1 = pd.Series(list1, name='Id')
+        cart.update({'Ordered Item list by id': dp.get_ordered_id_list(cart.get('Reduced SKU List'), series1)})
+    print('test')
+
 
 def load_shopping_cart_list(shopping_cart_folder):
     a1 = []
