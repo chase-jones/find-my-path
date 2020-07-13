@@ -98,7 +98,5 @@ def solve_tsp(s_distmx):
         if solution:
             print_solution(data, manager, routing, solution)
 
-
-    if __name__ == '__main__':
-        main()
+    main()
 
