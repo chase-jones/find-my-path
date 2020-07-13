@@ -22,7 +22,7 @@ def testgor(): # sofia used this function to make sure google or was working cor
     }
 
     return print(gor.solve_tsp(dp.reduce_loc(df,df_zone_pivot)))
-testgor()
+# testgor()
 
 def main():
     df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
@@ -47,7 +47,6 @@ def main():
 
     for cart in array_cart_dictionaries:
         cart.update({'Solved OR Zones': gor.solve_tsp(cart.get("Reduced df"))})
-
 
 def load_shopping_cart_list(shopping_cart_folder):
     a1 = []
