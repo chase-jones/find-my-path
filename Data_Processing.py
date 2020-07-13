@@ -98,7 +98,8 @@ def reduce_loc(df_zones, df_large_pivot):
     zone_list = df_zones['Zone'].tolist()
     colnames = []
     for x in zone_list:
-        colnames.append(str(x))
+        if str(x) not in colnames:
+            colnames.append(str(x))
     df1 = df_large_pivot[colnames]
     df2 = df1[df1.index.isin(zone_list)]
     return df2
