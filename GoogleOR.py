@@ -39,8 +39,8 @@ def solve_tsp(s_distmx):
         plan_output += '\n Go to checkout.' # checkout will always be last
         listoutput.append(int(s_distmx.columns[index]))
         plan_output += '\n Distance of the route: {}m\n'.format(route_distance) # route_distance is an integer
-        print(plan_output)
-        print(listoutput)
+        # print(plan_output)
+        # print(listoutput)
         return listoutput
 
         # uncomment this once we are running carts of descriptions, not ids.
@@ -96,7 +96,7 @@ def solve_tsp(s_distmx):
 
         # Print solution on console.
         if solution:
-            print_solution(data, manager, routing, solution)
+            return print_solution(data, manager, routing, solution)
 
-    main()
+    return(main())
 
