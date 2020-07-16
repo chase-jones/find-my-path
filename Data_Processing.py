@@ -16,11 +16,19 @@ if __name__ == '__main__':
     main()
 
 
-def df_item_to_id(item_list, df_all_skus):  # used to build sol dataframe
+def df_item_desc_to_id(item_list, df_all_skus):  # used to build sol dataframe
     id_list = []
     for item in item_list:
         id_list.append(df_all_skus.loc[df_all_skus['Description'] == item, 'Id'].values[0])
     res = pd.DataFrame(id_list, columns=['Id'])
+    return res
+
+
+def df_id_to_item_desc(desc_list, df_all_skus):
+    dsc_list = []
+    for item in desc_list:
+        dsc_list.append(df_all_skus.loc[df_all_skus['Id'] == item, 'Description'].values[0])
+    res = pd.DataFrame(dsc_list, columns=['Description'])
     return res
 
 
@@ -29,8 +37,9 @@ def df_id_to_zone(df_id, df_all_skus):
     id_list = df_id['Id'].tolist()
     for item in id_list:
         zone_list.append(df_all_skus.loc[df_all_skus['Id'] == item, 'Zone'].values[0])
-    result=pd.DataFrame(zone_list,columns =['Zone'])
+    result = pd.DataFrame(zone_list, columns=['Zone'])
     return result
+
 
 # def df_concat_id_and_zone(df_id, df_zone):
 # #merge both data frames
@@ -49,7 +58,8 @@ def df_id_to_zone_with_enter_exit(df_id, df_all_skus):  # used to build the matr
     return result
 
 
-def df_id_zone_combine(list_user_input_groceries, df_id, df_zone):  # builds sol dataframe with description, id, and zone
+def df_id_zone_combine(list_user_input_groceries, df_id,
+                       df_zone):  # builds sol dataframe with description, id, and zone
     # merge both data frames
     desc = pd.DataFrame(list_user_input_groceries, columns=['Description'])
     frames = [desc, df_id, df_zone]
@@ -57,12 +67,25 @@ def df_id_zone_combine(list_user_input_groceries, df_id, df_zone):  # builds sol
     return df_f
 
 
+def df_get_full_reduced_list_by_id(df_id, df_all_skus):
+    list_id = []
+    for item in df_id.values.tolist():
+        for id in item:
+            list_id.append(id)
+    return df_all_skus[df_all_skus['Id'].isin(list_id)]
+
+
+def df_replace_zeros_with_nines(df):
+    df = df.replace(to_replace=0, value=99999)
+    return df
+
+
 def get_ordered_id_list(df_list_ids_and_zones, df_ordered_zones):
     output_df = pd.DataFrame(columns=['Order_num', 'Item_ID'])
     i = 1
     for index, value in df_ordered_zones.items():
         # Generates a series based on the current zone. Stores in temp_series
-        temp_series = df_list_ids_and_zones.loc[df_list_ids_and_zones['Zone'] == value, 'Id']
+        temp_series = df_list_ids_and_zones.loc[df_list_ids_and_zones['Zone Number'] == value, 'Id']
 
         for index, value in temp_series.items():
             new_row = {'Order_num': i, 'Item_ID': value}
@@ -75,13 +98,15 @@ def reduce_loc(df_zones, df_large_pivot):
     zone_list = df_zones['Zone'].tolist()
     colnames = []
     for x in zone_list:
-        colnames.append(str(x))
+        if str(x) not in colnames:
+            colnames.append(str(x))
     df1 = df_large_pivot[colnames]
     df2 = df1[df1.index.isin(zone_list)]
     return df2
 
 
-def get_single_desc(df_ids_and_zones, int_zone_number):  # takes in a zone, returns a list of items needed from that zone
+def get_single_desc(df_ids_and_zones,
+                    int_zone_number):  # takes in a zone, returns a list of items needed from that zone
     temp_series = df_ids_and_zones.loc[df_ids_and_zones['Zone'] == int_zone_number, 'Description']  # .item()
     result = []
     for index, int_zone_number in temp_series.items():
