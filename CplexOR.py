@@ -11,13 +11,12 @@ import pyomo.environ as pyEnv
 def main():
     cost_matrix=pd.read_csv('/Users/nicolenarvaez/Downloads/CSV_Nicole.csv')
     print(cost_matrix)
-    print(solution(cost_matrix))
+    return (solution(cost_matrix))
 
 def solution(cost_matrix):
     n = len(cost_matrix)
-    zone_list = cost_matrix['Zone']
-    c_matrix=cost_matrix.drop(columns='Zone')
-    c_matrix=c_matrix.to_numpy()
+    zone_list = cost_matrix.columns
+    c_matrix=cost_matrix.to_numpy()
 
 #Model
     model = pyEnv.ConcreteModel()
@@ -69,13 +68,13 @@ def solution(cost_matrix):
     model.rest3 = pyEnv.Constraint(model.U, model.N, rule=rule_const3)
 
 #Prints the entire model
-    model.pprint()
+    #model.pprint()
 
 
     solver=pyEnv.SolverFactory('cplex')
     result=solver.solve(model, tee=False)
-    print(result)
-    print(type(result))
+    #print(result)
+    #print(type(result))
 
 
 #PRINTS DECISION VARIABLES
@@ -90,8 +89,8 @@ def solution(cost_matrix):
 
 ##DESIRED OUTPUT
 
-    path=[]
-
+    path = []
+    #space
     for j in List:
         if model.x[j]() !=0:
             path.append(j)
@@ -112,13 +111,13 @@ def solution(cost_matrix):
 
 
     test=get_path(1,path)
-    print(test)
+    #print(test)
 #prints it out in code indices
 
 
     for i in range(len(test)):
         test[i] = test[i]-1
-    print(test)
+    #print(test)
 
 
     ordered_zones=[]
@@ -127,7 +126,7 @@ def solution(cost_matrix):
 
 
     ordered_zones_pd=pd.Series(ordered_zones)
-    print('path: ', ordered_zones)
+    #print('path: ', ordered_zones)
     return ordered_zones_pd
 
 
@@ -137,6 +136,3 @@ if __name__ == "__main__":
     main()
 
 
-
-#PRINTS TIME
-# print('Time:',time.process_time())
