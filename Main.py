@@ -53,8 +53,8 @@ def main():
         list1.pop(0)
         series1 = pd.Series(list1, name='Id')
         cart.update({'Ordered Item list by id': dp.get_ordered_id_list(cart.get('Reduced SKU List'), series1)})
+        print(cart)
     print('test')
-
 
 def load_shopping_cart_list(shopping_cart_folder):
     a1 = []
@@ -98,7 +98,6 @@ def all_pixel_combos(image_df):
                         combination_df = combination_df.append(new_row, ignore_index=True)
 
     return combination_df
-
 
 if __name__ == "__main__":
     main()
