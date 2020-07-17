@@ -6,10 +6,13 @@ import GoogleOR as gor
 import Data_Processing as dp
 import os
 
+import cProfile
+import pstats
+
 def testgor(): # sofia used this function to make sure google or was working correctly - it can be deleted if it is no longer necessary
     df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
     df_full_sku_list = pd.read_csv('New Full SKU List.csv')
-    myGroceryList = ['AGAVE,DRIED (SOUTHWEST)', 'ACORNS,DRIED', 'ALLSPICE,GROUND', 'ALMONDS,BLANCHED']
+    myGroceryList = ['AGAVE,DRIED (SOUTHWEST)', 'ACORNS,DRIED', 'ALLSPICE,GROUND', 'ALMONDS,BLANCHED', 'ACORNS,DRIED']
 
     ids = dp.df_item_desc_to_id(myGroceryList, df_full_sku_list)
     df = dp.df_id_to_zone_with_enter_exit(ids, df_full_sku_list)
@@ -22,7 +25,7 @@ def testgor(): # sofia used this function to make sure google or was working cor
     }
 
     return print(gor.solve_tsp(dp.reduce_loc(df,df_zone_pivot)))
-# testgor()
+testgor()
 
 def main():
     df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
@@ -98,6 +101,20 @@ def all_pixel_combos(image_df):
                         combination_df = combination_df.append(new_row, ignore_index=True)
 
     return combination_df
+
+def gor_profile_solver():
+    cProfile.run('main()','gor_outputfile')
+    p = pstats.Stats('gor_outputfile')
+    p.sort_stats('cumulative').print_stats(10)
+
+gor_profile_solver()
+
+# def cor_profile_solver():
+#     cProfile.run('MainCP()','cor_outputfile')
+#     p = pstats.Stats('cor_outputfile')
+#     p.sort_stats('cumulative').print_stats(10)
+#
+# cor_profile_solver()
 
 if __name__ == "__main__":
     main()
