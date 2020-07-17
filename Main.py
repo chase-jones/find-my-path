@@ -1,31 +1,14 @@
 import pandas as pd
 import numpy as np
 # import Image_Processing as ip
-# import CplexOR as cor
+#import CplexOR as cor
 import GoogleOR as gor
 import Data_Processing as dp
 import os
 
 import cProfile
 import pstats
-
-def testgor(): # sofia used this function to make sure google or was working correctly - it can be deleted if it is no longer necessary
-    df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
-    df_full_sku_list = pd.read_csv('New Full SKU List.csv')
-    myGroceryList = ['AGAVE,DRIED (SOUTHWEST)', 'ACORNS,DRIED', 'ALLSPICE,GROUND', 'ALMONDS,BLANCHED', 'ACORNS,DRIED']
-
-    ids = dp.df_item_desc_to_id(myGroceryList, df_full_sku_list)
-    df = dp.df_id_to_zone_with_enter_exit(ids, df_full_sku_list)
-    print(df)
-    single_cart = {
-        "Reduced df": dp.reduce_loc(df, df_zone_pivot),
-        "Id df": myGroceryList,
-        "Reduced SKU List": dp.df_get_full_reduced_list_by_id(ids, df_full_sku_list),
-        "Reduced df 2": dp.df_replace_zeros_with_nines(dp.reduce_loc(df, df_zone_pivot))
-    }
-
-    return print(gor.solve_tsp(dp.reduce_loc(df,df_zone_pivot)))
-testgor()
+import io
 
 def main():
     df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
@@ -56,8 +39,36 @@ def main():
         list1.pop(0)
         series1 = pd.Series(list1, name='Id')
         cart.update({'Ordered Item list by id': dp.get_ordered_id_list(cart.get('Reduced SKU List'), series1)})
+    print('main() test')
+
+def mainCP():
+    df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
+    df_full_sku_list = pd.read_csv('New Full SKU List.csv')
+    array_all_shopping_carts = load_shopping_cart_list("Shopping Carts")
+
+    array_cart_dictionaries = []
+
+    for id_df in array_all_shopping_carts:
+        df = dp.df_id_to_zone_with_enter_exit(id_df, df_full_sku_list)
+        single_cart = {
+            "Reduced df": dp.reduce_loc(df, df_zone_pivot),
+            "Id df": id_df,
+            "Reduced SKU List": dp.df_get_full_reduced_list_by_id(id_df, df_full_sku_list),
+            "Reduced df 2": dp.df_replace_zeros_with_nines(dp.reduce_loc(df, df_zone_pivot))
+        }
+        array_cart_dictionaries.append(single_cart)
+
+    for cart in array_cart_dictionaries:
+        cart.update({'Solved OR Zones': cor.solution(cart.get("Reduced df 2"))})
+        # Maintaining list variable so we can remove the first and last zones from the list
+        list1 = cart.get('Solved OR Zones')
+        list1.pop(len(list1) - 1)
+        list1.pop(0)
+        series1 = pd.Series(list1, name='Id')
+        print(dp.get_ordered_id_list(cart.get('Reduced SKU List'), series1))
+        cart.update({'Ordered Item list by id': dp.get_ordered_id_list(cart.get('Reduced SKU List'), series1)})
         print(cart)
-    print('test')
+    print('mainCP() test')
 
 def load_shopping_cart_list(shopping_cart_folder):
     a1 = []
@@ -103,18 +114,57 @@ def all_pixel_combos(image_df):
     return combination_df
 
 def gor_profile_solver():
-    cProfile.run('main()','gor_outputfile')
-    p = pstats.Stats('gor_outputfile')
-    p.sort_stats('cumulative').print_stats(10)
+    ## to print onto console
+    # cProfile.run('testgor()', 'gor_outputfile')
+    # p = pstats.Stats('gor_outputfile')
+    # p.sort_stats('cumulative').print_stats(10)
 
-gor_profile_solver()
+    # to write to csv
+    for i in range(10):
+        csvname = 'gor_profile_' + str(i) + '.csv' # change this name to reflect the cart size we are testing
+        pr = cProfile.Profile()
+        pr.enable()
+        main()
+        pr.disable()
 
-# def cor_profile_solver():
-#     cProfile.run('MainCP()','cor_outputfile')
-#     p = pstats.Stats('cor_outputfile')
-#     p.sort_stats('cumulative').print_stats(10)
-#
-# cor_profile_solver()
+        result = io.StringIO()
+        pstats.Stats(pr, stream=result).sort_stats('cumulative').print_stats()
+        result = result.getvalue()
+        # chop the string into a csv-like buffer
+        result = 'ncalls' + result.split('ncalls')[-1]
+        result = '\n'.join([','.join(line.rstrip().split(None, 5)) for line in result.split('\n')])
+        # save it to disk
+
+        with open(csvname, 'w+') as f:
+            # f=open(result.rsplit('.')[0]+'.csv','w')
+            f.write(result)
+            f.close()
+
+def cor_profile_solver():
+    ## to print onto console
+    # cProfile.run('testcor()', 'cor_outputfile')
+    # p = pstats.Stats('cor_outputfile')
+    # p.sort_stats('cumulative').print_stats(10)
+
+    # to write to csv
+    for i in range(10):
+        csvname = 'cor_profile_' + str(i) + '.csv' # change this name to reflect the cart size we are testing
+        pr = cProfile.Profile()
+        pr.enable()
+        mainCP()
+        pr.disable()
+
+        result = io.StringIO()
+        pstats.Stats(pr, stream=result).sort_stats('cumulative').print_stats()
+        result = result.getvalue()
+        # chop the string into a csv-like buffer
+        result = 'ncalls' + result.split('ncalls')[-1]
+        result = '\n'.join([','.join(line.rstrip().split(None, 5)) for line in result.split('\n')])
+        # save it to disk
+
+        with open(csvname, 'w+') as f:
+            f.write(result)
+            f.close()
 
 if __name__ == "__main__":
-    main()
+    gor_profile_solver()
