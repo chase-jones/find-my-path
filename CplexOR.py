@@ -45,7 +45,7 @@ def solution(c_matrix,n,zone_list):
 
     model.objective = pyEnv.Objective(rule=obj_func,sense=pyEnv.minimize)
 
-    #Constraint 1
+#Constraint 1
     def rule_const1(model,M):
         return sum(model.x[i,M] for i in model.N if i!=M ) == 1
 
