@@ -1,13 +1,6 @@
 from __future__ import print_function
-# noinspection PyUnresolvedReferences
 from ortools.constraint_solver import pywrapcp
-# noinspection PyUnresolvedReferences
 from ortools.constraint_solver import routing_enums_pb2
-import numpy as np
-import pandas as pd
-import Data_Processing as dp
-
-# data = pd.read_csv('C:/Users/satzr/Desktop/Senior Design/GoogleTSPwithClasses/Zone Distanced Pivoted.csv', index_col=0)
 
 def solve_tsp(s_distmx):
     solver_distmx = s_distmx.values.tolist()
