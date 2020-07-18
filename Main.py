@@ -10,6 +10,18 @@ import cProfile
 import pstats
 import io
 
+def group_by_items(array_cart_orderedids):
+    group, members = [], set()
+
+    for item in array_cart_orderedids:
+        if group and members.isdisjoint(item):
+            yield group
+            group, members = [], set()
+        group.append(item)
+        members.update(item)
+
+    yield group
+
 def main():
     df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
     df_full_sku_list = pd.read_csv('New Full SKU List.csv')
@@ -40,6 +52,9 @@ def main():
         series1 = pd.Series(list1, name='Id')
         cart.update({'Ordered Item list by id': dp.get_ordered_id_list(cart.get('Reduced SKU List'), series1)})
     print('main() test')
+
+    # get an array of the ordered ids of each cart
+    # group_by_items(thisarray)
 
 def mainCP():
     df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
