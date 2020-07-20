@@ -67,15 +67,14 @@ def solution(cost_matrix):
 
     model.rest3 = pyEnv.Constraint(model.U, model.N, rule=rule_const3)
 
-    #Constraint 4 -- constraint that will be able to assure that (999,1)==1 -- not currently working
-    #def rule_const4(model):
-        #if model.x[n,1]() != 1:
-           # return  model.x[n, 1]() == model.x[n,1]() - model.x[n,1]() + 1 # decision variable == 1
-        #else:
-           # return model.x[n, 1]() == model.x[n,1]() - model.x[n,1]() + 1
 
 
-   # model.rest4 = pyEnv.Constraint(model.x,rule=rule_const4)
+
+    #Constraint 4 -- constraint that will be able to assure that (999,1)==1
+    def rule_const4(model):
+        return model.x[n,1] == 1
+
+    model.rest4 = pyEnv.Constraint(rule=rule_const4)
 #Prints the entire model
     #model.pprint()
 
@@ -84,7 +83,7 @@ def solution(cost_matrix):
     result=solver.solve(model, tee=False)
     #print(result)
     #print(type(result))
-
+    print(model.x[n,1],'--',model.x[n, 1].value)
 
 #PRINTS DECISION VARIABLES
 
@@ -121,7 +120,7 @@ def solution(cost_matrix):
 
     test=get_path(1,path)
     #print(test)
-#prints it out in code indices
+
 
 
     ordered_zones=[]
@@ -129,16 +128,9 @@ def solution(cost_matrix):
         ordered_zones.append(zone_list[k])
 
 
-
-    #makes sure that 999 is at the end -- quick fix, not entirely sure if this is the right thing to do...
-    if ordered_zones[n-1] != '999':
-        ordered_zones.remove('999')
-        ordered_zones.append('999')
-
-
     ordered_zones_pd=pd.Series(ordered_zones)
     #print('path: ', ordered_zones)
-    #print(ordered_zones_pd)
+    print(ordered_zones_pd)
     return ordered_zones_pd
 
 
