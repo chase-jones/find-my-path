@@ -83,12 +83,11 @@ def solution(cost_matrix):
     result=solver.solve(model, tee=False)
     #print(result)
     #print(type(result))
-    print(model.x[n,1],'--',model.x[n, 1].value)
 
 #PRINTS DECISION VARIABLES
 
     List = list(model.x.keys())
-    print(List)
+
 #breakpoint -- can check memory (list might already exist)
 
     for i in List:
@@ -129,8 +128,7 @@ def solution(cost_matrix):
 
 
     ordered_zones_pd=pd.Series(ordered_zones)
-    #print('path: ', ordered_zones)
-    print(ordered_zones_pd)
+    #print(ordered_zones_pd)
     return ordered_zones_pd
 
 
