@@ -77,9 +77,9 @@ def mainCP():
     df_full_sku_list = pd.read_csv('New Full SKU List.csv')
     array_cart_dictionaries = []
 
-    for filename in os.listdir("Shopping Carts"):
+    for filename in os.listdir("Shopping Carts 3"):
         if filename.endswith(".csv"):
-            id_df = pd.read_csv('Shopping Carts' + '/' + filename, header=None)
+            id_df = pd.read_csv('Shopping Carts 3' + '/' + filename, header=None)
             id_df.columns = ['Id']
             df = dp.df_id_to_zone_with_enter_exit(id_df, df_full_sku_list)
             filename = filename[:-4]
