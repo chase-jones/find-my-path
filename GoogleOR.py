@@ -14,32 +14,25 @@ def solve_tsp(s_distmx):
 
     def print_solution(data, manager, routing, solution):
         index = routing.Start(0)
-        plan_output = 'Building route for customer list...\n'
+        # plan_output = 'Building route for customer list...\n'
         route_distance = 0
-        listoutput = [] # used to build list output for future program use
+        listoutput = []
         while not routing.IsEnd(index):
             zonenumber = s_distmx.columns[index] # to build the headers we use the pandas dataframe. zonenumber is a string (column header)
             # itemdescription = dp.get_single_desc(sol,int(zonenumber))
             listoutput.append(int(zonenumber)) # appends zone number to list.
-            if index == 0:
-                plan_output += '\n Start at store entrance.' # store entrance will always be first
-            else:
-                plan_output += '\n Go to Zone %s and get [item description].' %(zonenumber) # itemdescription, used to build 'user friendly' output
-            previous_index = index
+            # if index == 0:
+            #     plan_output += '\n Start at store entrance.' # store entrance will always be first
+            # else:
+            #     plan_output += '\n Go to Zone %s and get [item description].' %(zonenumber) # itemdescription, used to build 'user friendly' output
+            # previous_index = index
             index = solution.Value(routing.NextVar(index))
-            route_distance += routing.GetArcCostForVehicle(
-                previous_index, index, 0)
-        plan_output += '\n Go to checkout.' # checkout will always be last
+            # route_distance += routing.GetArcCostForVehicle(
+            #     previous_index, index, 0)
+        # plan_output += '\n Go to checkout.' # checkout will always be last
         listoutput.append(int(s_distmx.columns[index]))
-        plan_output += '\n Distance of the route: {}m\n'.format(route_distance) # route_distance is an integer
-        # print(plan_output)
-        # print(listoutput)
+        # plan_output += '\n Distance of the route: {}m\n'.format(route_distance) # route_distance is an integer
         return listoutput
-
-        # uncomment this once we are running carts of descriptions, not ids.
-        # df_orderedids = dp.get_ordered_id_list(sol,listoutput)
-        # print(df_orderedids)
-        # return df_orderedids
 
     def main():
         """Entry point of the program."""
@@ -53,7 +46,6 @@ def solve_tsp(s_distmx):
 
         # Create Routing Model.
         routing = pywrapcp.RoutingModel(manager)
-
 
         # Create and register a transit callback.
         def distance_callback(from_index, to_index):
@@ -92,4 +84,3 @@ def solve_tsp(s_distmx):
             return print_solution(data, manager, routing, solution)
 
     return(main())
-
