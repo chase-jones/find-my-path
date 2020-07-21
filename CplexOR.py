@@ -90,9 +90,9 @@ def solution(cost_matrix):
 
 #breakpoint -- can check memory (list might already exist)
 
-    for i in List:
-        if model.x[i]() != 0:
-            print(i,'--',model.x[i]())
+    #for i in List:
+       # if model.x[i]() != 0:
+            #print(i,'--',model.x[i]())
 
 ##DESIRED OUTPUT
 
@@ -118,13 +118,15 @@ def solution(cost_matrix):
 
 
     test=get_path(1,path)
-    #print(test)
 
 
 
     ordered_zones=[]
     for k in test:
-        ordered_zones.append(zone_list[k])
+        if k == len(zone_list):
+            ordered_zones.append(zone_list[k-1])
+        else:
+            ordered_zones.append(zone_list[k])
 
 
     ordered_zones_pd=pd.Series(ordered_zones)
