@@ -3,6 +3,7 @@ from ortools.constraint_solver import pywrapcp
 from ortools.constraint_solver import routing_enums_pb2
 
 def solve_tsp(s_distmx):
+
     solver_distmx = s_distmx.values.tolist()
     def create_data_model():
         data = {}
@@ -84,3 +85,7 @@ def solve_tsp(s_distmx):
             return print_solution(data, manager, routing, solution)
 
     return(main())
+
+if __name__ == "__main__":
+    distancematrix_asarray = # read the csv here
+    solve_tsp(distancematrix_asarray)
