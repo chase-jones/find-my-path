@@ -1,9 +1,9 @@
 from __future__ import print_function
 from ortools.constraint_solver import pywrapcp
 from ortools.constraint_solver import routing_enums_pb2
+import pandas as pd
 
 def solve_tsp(s_distmx):
-
     solver_distmx = s_distmx.values.tolist()
     def create_data_model():
         data = {}
@@ -33,6 +33,7 @@ def solve_tsp(s_distmx):
         # plan_output += '\n Go to checkout.' # checkout will always be last
         listoutput.append(int(s_distmx.columns[index]))
         # plan_output += '\n Distance of the route: {}m\n'.format(route_distance) # route_distance is an integer
+        print(listoutput)
         return listoutput
 
     def main():
@@ -87,5 +88,7 @@ def solve_tsp(s_distmx):
     return(main())
 
 if __name__ == "__main__":
-    distancematrix_asarray = # read the csv here
-    solve_tsp(distancematrix_asarray)
+    nicoletest = pd.read_csv('CSV_Nicole.csv')
+    nicoletest = df = nicoletest.drop(nicoletest.columns[[0]], axis=1)
+    print(nicoletest)
+    solve_tsp(nicoletest)
