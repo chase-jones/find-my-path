@@ -1,6 +1,7 @@
 from __future__ import print_function
 from ortools.constraint_solver import pywrapcp
 from ortools.constraint_solver import routing_enums_pb2
+import pandas as pd
 
 def solve_tsp(s_distmx):
     solver_distmx = s_distmx.values.tolist()
@@ -23,9 +24,7 @@ def solve_tsp(s_distmx):
             index = solution.Value(routing.NextVar(index))
             route_distance += routing.GetArcCostForVehicle(previous_index, index, 0)
         listoutput.append(int(s_distmx.columns[index]))
-        # print(route_distance)
-        # return route_distance
-        return listoutput
+        return(listoutput,route_distance)
 
     def main():
         """Entry point of the program."""
@@ -80,6 +79,6 @@ def solve_tsp(s_distmx):
 
 # if __name__ == "__main__":
 #     nicoletest = pd.read_csv('CSV_Nicole.csv')
-#     nicoletest = df = nicoletest.drop(nicoletest.columns[[0]], axis=1)
+#     nicoletest = nicoletest.drop(nicoletest.columns[[0]], axis=1)
 #     print(nicoletest)
 #     solve_tsp(nicoletest)
