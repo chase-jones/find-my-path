@@ -15,25 +15,17 @@ def solve_tsp(s_distmx):
 
     def print_solution(data, manager, routing, solution):
         index = routing.Start(0)
-        # plan_output = 'Building route for customer list...\n'
         route_distance = 0
         listoutput = []
         while not routing.IsEnd(index):
             zonenumber = s_distmx.columns[index] # to build the headers we use the pandas dataframe. zonenumber is a string (column header)
-            # itemdescription = dp.get_single_desc(sol,int(zonenumber))
             listoutput.append(int(zonenumber)) # appends zone number to list.
-            # if index == 0:
-            #     plan_output += '\n Start at store entrance.' # store entrance will always be first
-            # else:
-            #     plan_output += '\n Go to Zone %s and get [item description].' %(zonenumber) # itemdescription, used to build 'user friendly' output
-            # previous_index = index
+            previous_index = index
             index = solution.Value(routing.NextVar(index))
-            # route_distance += routing.GetArcCostForVehicle(
-            #     previous_index, index, 0)
-        # plan_output += '\n Go to checkout.' # checkout will always be last
+            route_distance += routing.GetArcCostForVehicle(previous_index, index, 0)
         listoutput.append(int(s_distmx.columns[index]))
-        # plan_output += '\n Distance of the route: {}m\n'.format(route_distance) # route_distance is an integer
-        print(listoutput)
+        # print(route_distance)
+        # return route_distance
         return listoutput
 
     def main():
@@ -87,8 +79,8 @@ def solve_tsp(s_distmx):
 
     return(main())
 
-if __name__ == "__main__":
-    nicoletest = pd.read_csv('CSV_Nicole.csv')
-    nicoletest = df = nicoletest.drop(nicoletest.columns[[0]], axis=1)
-    print(nicoletest)
-    solve_tsp(nicoletest)
+# if __name__ == "__main__":
+#     nicoletest = pd.read_csv('CSV_Nicole.csv')
+#     nicoletest = df = nicoletest.drop(nicoletest.columns[[0]], axis=1)
+#     print(nicoletest)
+#     solve_tsp(nicoletest)
