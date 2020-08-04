@@ -16,9 +16,7 @@ def main():
 def solution(cost_matrix):
     n = len(cost_matrix)
     zone_list = cost_matrix.columns
-    cost_matrix=cost_matrix.drop(columns='Zone')
     c_matrix=cost_matrix.to_numpy()
-
 #Model
     model = pyEnv.ConcreteModel()
 
@@ -44,7 +42,7 @@ def solution(cost_matrix):
         return sum(model.x[i,j] * model.c[i,j] for i in model.N for j in model.M)
 
     model.objective = pyEnv.Objective(rule=obj_func,sense=pyEnv.minimize)
-    print(obj_func(model))
+
 #Constraint 1
     def rule_const1(model,M):
         return sum(model.x[i,M] for i in model.N if i!=M ) == 1
@@ -134,11 +132,10 @@ def solution(cost_matrix):
         if k == len(zone_list):
             ordered_zones.append(zone_list[k-1])
         else:
-            ordered_zones.append(zone_list[k])
+            ordered_zones.append(zone_list[k-1])
 
 
     ordered_zones_pd=pd.Series(ordered_zones)
-    print(ordered_zones_pd)
     print(model.objective())
     return ordered_zones_pd
 
