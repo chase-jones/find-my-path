@@ -76,7 +76,7 @@ def df_get_full_reduced_list_by_id(df_id, df_all_skus):
 
 
 def df_replace_zeros_with_nines(df):
-    df = df.replace(to_replace=0, value=99999)
+    df = df.replace(to_replace=0, value=9999999999)
     return df
 
 

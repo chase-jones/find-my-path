@@ -23,7 +23,7 @@ def group_by_items(array_cart_orderedids):
     yield group
 
 def mainGG():
-    df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
+    df_zone_pivot = pd.read_csv('New Zone Distanced Pivoted Integers Only.csv', index_col=0)
     df_full_sku_list = pd.read_csv('New Full SKU List.csv')
     array_cart_dictionaries = []
 
@@ -73,7 +73,7 @@ def mainGOR(cart):
     cart.update({'Ordered Item list by id': dp.get_ordered_id_list(cart.get('Reduced SKU List'), series1)})
 
 def mainCP():
-    df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
+    df_zone_pivot = pd.read_csv('New Zone Distanced Pivoted Integers Only.csv', index_col=0)
     df_full_sku_list = pd.read_csv('New Full SKU List.csv')
     array_cart_dictionaries = []
 

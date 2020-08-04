@@ -136,8 +136,10 @@ def solution(cost_matrix):
 
 
     ordered_zones_pd=pd.Series(ordered_zones)
-    print(model.objective())
-    return ordered_zones_pd
+
+
+
+    return ordered_zones_pd, model.objective()
 
 
 

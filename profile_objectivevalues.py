@@ -47,7 +47,7 @@ def mainGOR(cart):
     cart.update({'Objective Function': result[1]})
 
 def mainCP():
-    df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
+    df_zone_pivot = pd.read_csv('New Zone Distanced Pivoted Integers Only.csv', index_col=0)
     df_full_sku_list = pd.read_csv('New Full SKU List.csv')
     array_cart_dictionaries = []
 
@@ -66,35 +66,27 @@ def mainCP():
             }
             array_cart_dictionaries.append(single_cart)
 
+    df_objective = pd.DataFrame(
+        columns=['solver', 'cart size', 'cart sample', 'run number', 'objective function', 'ordered zones'])
     for cart in array_cart_dictionaries:
+        firsthalf = cart.get("File Name").split('S')
+        ssize = firsthalf[1][2:]
+        sampnum = firsthalf[2][2:]
         for i in range(10):
-            csvname = 'cplex_' + cart.get("File Name") + '_' + str(i) + '.csv'
-            pr = cProfile.Profile()
-            pr.enable()
             mainCOR(cart)
-            pr.disable()
+            df_objective = df_objective.append(
+                {'solver': 'cplex', 'cart size': ssize, 'cart sample': sampnum, 'run number': i,
+                 'objective function': cart.get("Objective Function"), 'ordered zones': cart.get('Solved OR Zones')},
+                ignore_index=True)
 
-            result = io.StringIO()
-            pstats.Stats(pr, stream=result).sort_stats('cumulative').print_stats()
-            result = result.getvalue()
-            # chop the string into a csv-like buffer
-            result = 'ncalls' + result.split('ncalls')[-1]
-            result = '\n'.join([','.join(line.rstrip().split(None, 5)) for line in result.split('\n')])
-            # save it to disk
+    df_objective.to_csv('CplexObjectiveValues.csv', index=False)
 
-            with open(csvname, 'w+') as f:
-                # f=open(result.rsplit('.')[0]+'.csv','w')
-                f.write(result)
-                f.close()
 
 def mainCOR(cart):
-    cart.update({'Solved OR Zones': cor.solution(cart.get("Reduced df 2"))})
-    # Maintaining list variable so we can remove the first and last zones from the list
-    list1 = cart.get('Solved OR Zones')
-    list1.pop(len(list1) - 1)
-    list1.pop(0)
-    series1 = pd.Series(list1, name='Id')
-    cart.update({'Ordered Item list by id': dp.get_ordered_id_list(cart.get('Reduced SKU List'), series1)})
+    result = cor.solution(cart.get("Reduced df 2"))
+    cart.update({'Solved OR Zones': result[0]})
+    cart.update({'Objective Function': result[1]})
+
 
 def load_shopping_cart_list(shopping_cart_folder):
     a1 = []
