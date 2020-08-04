@@ -11,11 +11,12 @@ import pyomo.environ as pyEnv
 def main():
     cost_matrix=pd.read_csv('/Users/nicolenarvaez/Downloads/CSV_Nicole.csv')
     print(cost_matrix)
-    return (solution(cost_matrix))
+    solution(cost_matrix)
 
 def solution(cost_matrix):
     n = len(cost_matrix)
     zone_list = cost_matrix.columns
+    cost_matrix=cost_matrix.drop(columns='Zone')
     c_matrix=cost_matrix.to_numpy()
 
 #Model
@@ -43,7 +44,7 @@ def solution(cost_matrix):
         return sum(model.x[i,j] * model.c[i,j] for i in model.N for j in model.M)
 
     model.objective = pyEnv.Objective(rule=obj_func,sense=pyEnv.minimize)
-
+    print(obj_func(model))
 #Constraint 1
     def rule_const1(model,M):
         return sum(model.x[i,M] for i in model.N if i!=M ) == 1
@@ -72,17 +73,24 @@ def solution(cost_matrix):
 
     #Constraint 4 -- constraint that will be able to assure that (999,1)==1
     def rule_const4(model):
-        return model.x[n,1] == 1
+        return model.x[1,n] == 0
 
     model.rest4 = pyEnv.Constraint(rule=rule_const4)
+
+    def rule_const5(model):
+        return model.x[n,1] == 1
+
+    model.rest5 = pyEnv.Constraint(rule=rule_const5)
+
+
 #Prints the entire model
     #model.pprint()
 
 
     solver=pyEnv.SolverFactory('cplex')
     result=solver.solve(model, tee=False)
-    #print(result)
     #print(type(result))
+
 
 #PRINTS DECISION VARIABLES
 
@@ -91,7 +99,7 @@ def solution(cost_matrix):
 #breakpoint -- can check memory (list might already exist)
 
     #for i in List:
-       # if model.x[i]() != 0:
+        #if model.x[i]() != 0:
             #print(i,'--',model.x[i]())
 
 ##DESIRED OUTPUT
@@ -130,7 +138,8 @@ def solution(cost_matrix):
 
 
     ordered_zones_pd=pd.Series(ordered_zones)
-    #print(ordered_zones_pd)
+    print(ordered_zones_pd)
+    print(model.objective())
     return ordered_zones_pd
 
 
