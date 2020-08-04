@@ -1,7 +1,6 @@
 from __future__ import print_function
 from ortools.constraint_solver import pywrapcp
 from ortools.constraint_solver import routing_enums_pb2
-import pandas as pd
 
 def solve_tsp(s_distmx):
     solver_distmx = s_distmx.values.tolist()
