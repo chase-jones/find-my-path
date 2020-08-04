@@ -11,12 +11,12 @@ import pstats
 import io
 
 def mainGG():
-    df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
+    df_zone_pivot = pd.read_csv('New Zone Distanced Pivoted.csv', index_col=0)
     df_full_sku_list = pd.read_csv('New Full SKU List.csv')
     array_cart_dictionaries = []
 
     for filename in os.listdir("Shopping Carts 3"):
-        if filename.endswith("Sze10Smp4.csv"):
+        if filename.endswith(".csv"):
             id_df = pd.read_csv('Shopping Carts 3' + '/' + filename, header=None)
             id_df.columns=['Id']
             df = dp.df_id_to_zone_with_enter_exit(id_df, df_full_sku_list)
@@ -30,27 +30,20 @@ def mainGG():
             }
             array_cart_dictionaries.append(single_cart)
 
-    df_objective = pd.DataFrame(columns = ['solver', 'cart size', 'cart sample', 'run number', 'objective function'])
+    df_objective = pd.DataFrame(columns = ['solver', 'cart size', 'cart sample', 'run number', 'objective function','ordered zones'])
     for cart in array_cart_dictionaries:
         firsthalf = cart.get("File Name").split('S')
-        ssize= firsthalf[1][2:]
-        sampnum=firsthalf[2][2:]
-        for i in range(1):
-            print(cart.get('File Name'))
-            print(cart.get('Objective Function'))
-            print(cart.get('Reduced df'))
+        ssize = firsthalf[1][2:]
+        sampnum =firsthalf[2][2:]
+        for i in range(10):
             mainGOR(cart)
-            df_objective = df_objective.append({'solver': 'google', 'cart size': ssize, 'cart sample': sampnum, 'run number': i, 'objective function': cart.get("Objective Function")}, ignore_index=True)
+            df_objective = df_objective.append({'solver': 'google', 'cart size': ssize, 'cart sample': sampnum, 'run number': i, 'objective function': cart.get("Objective Function"),'ordered zones': cart.get('Solved OR Zones')}, ignore_index=True)
 
     df_objective.to_csv('GoogleObjectiveValues.csv',index=False)
-    for col in cart.get('Reduced df').columns:
-        print(col)
-    #cart.get('Reduced df').to_csv('10-4df.csv')
 
 def mainGOR(cart):
-    cart.update({'Objective Function': gor.solve_tsp(cart.get("Reduced df"))})
-    # print(cart.get('Objective Function'))
-    # print(cart.get('Reduced df'))
+    cart.update({'Solved OR Zones': gor.solve_tsp(cart.get("Reduced df"))[0]})
+    cart.update({'Objective Function': gor.solve_tsp(cart.get("Reduced df"))[1]})
 
 def mainCP():
     df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
