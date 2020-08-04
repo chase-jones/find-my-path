@@ -42,8 +42,9 @@ def mainGG():
     df_objective.to_csv('GoogleObjectiveValues.csv',index=False)
 
 def mainGOR(cart):
-    cart.update({'Solved OR Zones': gor.solve_tsp(cart.get("Reduced df"))[0]})
-    cart.update({'Objective Function': gor.solve_tsp(cart.get("Reduced df"))[1]})
+    result = gor.solve_tsp(cart.get("Reduced df"))
+    cart.update({'Solved OR Zones': result[0]})
+    cart.update({'Objective Function': result[1]})
 
 def mainCP():
     df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
