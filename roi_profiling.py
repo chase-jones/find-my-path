@@ -1,17 +1,24 @@
 from __future__ import print_function
 import pandas as pd
-# import Image_Processing as ip
 #import CplexOR as cor
 import GoogleOR as gor
 import Data_Processing as dp
-import os
-
-import cProfile
-import pstats
-import io
 
 import psutil
 import os
+
+def get_size(bytes, suffix="B"):
+    """
+    Scale bytes to its proper format
+    e.g:
+        1253656 => '1.20MB'
+        1253656678 => '1.17GB'
+    """
+    factor = 1024
+    for unit in ["", "K", "M", "G", "T", "P"]:
+        if bytes < factor:
+            return f"{bytes:.2f}{unit}{suffix}"
+        bytes /= factor
 
 def mainGG():
     df_zone_pivot = pd.read_csv('New Zone Distanced Pivoted Integers Only.csv', index_col=0)
@@ -34,33 +41,26 @@ def mainGG():
                 }
                 array_cart_dictionaries.append(single_cart)
 
-    df_roi = pd.DataFrame(columns=['filename', 'cpu %', 'ram %','virtualmemory','MB estimate'])
+    df_roi = pd.DataFrame(columns=['filename', 'cpu', 'memory', '# threads','# handles','cpuseconds'])
     for cart in array_cart_dictionaries:
-        print(cart.get("File Name"))
-        print('solver: google')
         mainGOR(cart)
-
-        #psutil.virtual_memory()
-        cpupercent = psutil.cpu_percent()
-        mempercent = psutil.virtual_memory()[2]
-
-        print('cpu % used:', cpupercent)
-        print('virtual memory', psutil.virtual_memory()) # physical memory usage
-        print('memory % used:', mempercent)
+        current_frequency = str(psutil.cpu_freq()[0]/1000) + 'GHz'
 
         pid = os.getpid()
         py = psutil.Process(pid)
-        memoryUse = py.memory_info()[0] / 2. ** 30  # memory use in GB...I think
-        # print('memory use (GB?):', memoryUse)
+        with py.oneshot():
+            n_threads = py.num_threads()
+            n_handles = py.num_handles()
+            uss = get_size(py.memory_full_info()[-1])
+            system_cputime_seconds = py.threads()[0][2] # system cpu time for thread
 
         df_roi = df_roi.append(
-            {'filename': cart.get("File Name"), 'cpu %': cpupercent,'ram %': mempercent,'virtualmemory':psutil.virtual_memory(),'MB estimate': memoryUse*1000}, ignore_index=True)
+            {'filename': cart.get("File Name"), 'cpu': current_frequency,'memory': uss,'# threads': n_threads,'# handles':n_handles,'cpuseconds':system_cputime_seconds}, ignore_index=True)
 
         df_roi.to_csv('GoogleROIValues.csv', index=False)
 
 def mainGOR(cart):
     cart.update({'Solved OR Zones': gor.solve_tsp(cart.get("Reduced df"))[0]})
-
     list1 = cart.get('Solved OR Zones')
     list1.pop(len(list1) - 1)
     list1.pop(0)
@@ -88,19 +88,24 @@ def mainCP():
                 }
                 array_cart_dictionaries.append(single_cart)
 
+    df_roi = pd.DataFrame(columns=['filename', 'cpu', 'memory', '# threads', '# handles', 'cpuseconds'])
     for cart in array_cart_dictionaries:
-        print(cart.get("File Name"))
-        print('solver: cplex')
         mainCOR(cart)
+        current_frequency = str(psutil.cpu_freq()[0] / 1000) + 'GHz'
 
-        print('cpu % used:', psutil.cpu_percent())
-        # print('virtual memory', psutil.virtual_memory()) # physical memory usage
-        print('memory % used:', psutil.virtual_memory()[2])
+        pid = os.getpid()
+        py = psutil.Process(pid)
+        with py.oneshot():
+            n_threads = py.num_threads()
+            n_handles = py.num_handles()
+            uss = get_size(py.memory_full_info()[-1])
+            system_cputime_seconds = py.threads()[0][2]  # system cpu time for thread
 
-        # pid = os.getpid()
-        # py = psutil.Process(pid)
-        # memoryUse = py.memory_info()[0] / 2. ** 30  # memory use in GB...I think
-        # print('memory use (GB?):', memoryUse)
+        df_roi = df_roi.append(
+            {'filename': cart.get("File Name"), 'cpu': current_frequency, 'memory': uss, '# threads': n_threads,
+             '# handles': n_handles, 'cpuseconds': system_cputime_seconds}, ignore_index=True)
+
+        df_roi.to_csv('CplexROIValues.csv', index=False)
 
 def mainCOR(cart):
     cart.update({'Solved OR Zones': cor.solution(cart.get("Reduced df 2"))[0]})
