@@ -10,18 +10,6 @@ import cProfile
 import pstats
 import io
 
-def group_by_items(array_cart_orderedids):
-    group, members = [], set()
-
-    for item in array_cart_orderedids:
-        if group and members.isdisjoint(item):
-            yield group
-            group, members = [], set()
-        group.append(item)
-        members.update(item)
-
-    yield group
-
 def mainGG():
     df_zone_pivot = pd.read_csv('New Zone Distanced Pivoted Integers Only.csv', index_col=0)
     df_full_sku_list = pd.read_csv('New Full SKU List.csv')
@@ -64,7 +52,7 @@ def mainGG():
                 f.close()
 
 def mainGOR(cart):
-    cart.update({'Solved OR Zones': gor.solve_tsp(cart.get("Reduced df"))})
+    cart.update({'Solved OR Zones': gor.solve_tsp(cart.get("Reduced df")[0])})
     # Maintaining list variable so we can remove the first and last zones from the list
     list1 = cart.get('Solved OR Zones')
     list1.pop(len(list1) - 1)
@@ -114,7 +102,7 @@ def mainCP():
                 f.close()
 
 def mainCOR(cart):
-    cart.update({'Solved OR Zones': cor.solution(cart.get("Reduced df 2"))})
+    cart.update({'Solved OR Zones': cor.solution(cart.get("Reduced df 2"))[0]})
     # Maintaining list variable so we can remove the first and last zones from the list
     list1 = cart.get('Solved OR Zones')
     list1.pop(len(list1) - 1)
