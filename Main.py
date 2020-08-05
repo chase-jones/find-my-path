@@ -52,7 +52,7 @@ def mainGG():
                 f.close()
 
 def mainGOR(cart):
-    cart.update({'Solved OR Zones': gor.solve_tsp(cart.get("Reduced df")[0])})
+    cart.update({'Solved OR Zones': gor.solve_tsp(cart.get("Reduced df"))[0]})
     # Maintaining list variable so we can remove the first and last zones from the list
     list1 = cart.get('Solved OR Zones')
     list1.pop(len(list1) - 1)
