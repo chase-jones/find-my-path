@@ -35,6 +35,7 @@ def mainGG():
         firsthalf = cart.get("File Name").split('S')
         ssize = firsthalf[1][2:]
         sampnum =firsthalf[2][2:]
+
         for i in range(10):
             mainGOR(cart)
             df_objective = df_objective.append({'solver': 'google', 'cart size': ssize, 'cart sample': sampnum, 'run number': i, 'objective function': cart.get("Objective Function"),'ordered zones': cart.get('Solved OR Zones')}, ignore_index=True)
@@ -52,7 +53,7 @@ def mainCP():
     array_cart_dictionaries = []
 
     for filename in os.listdir("Shopping Carts 3"):
-        if filename.endswith(".csv"):
+        if filename.endswith("Sze10Smp4.csv"):
             id_df = pd.read_csv('Shopping Carts 3' + '/' + filename, header=None)
             id_df.columns = ['Id']
             df = dp.df_id_to_zone_with_enter_exit(id_df, df_full_sku_list)
