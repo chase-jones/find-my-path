@@ -1,7 +1,6 @@
 from __future__ import print_function
 from ortools.constraint_solver import pywrapcp
 from ortools.constraint_solver import routing_enums_pb2
-import pandas as pd
 
 def solve_tsp(s_distmx):
     solver_distmx = s_distmx.values.tolist()
@@ -57,11 +56,11 @@ def solve_tsp(s_distmx):
         routing.AddDimension(
             transit_callback_index,
             0,  # no slack
-            999999,  # vehicle maximum travel distance
+            9223372036854775807,  # vehicle maximum travel distance
             True,  # start cumul to zero
             dimension_name)
-        distance_dimension = routing.GetDimensionOrDie(dimension_name)
-        distance_dimension.SetGlobalSpanCostCoefficient(100)
+        #distance_dimension = routing.GetDimensionOrDie(dimension_name)
+        #distance_dimension.SetGlobalSpanCostCoefficient(100)
 
         # Setting first solution heuristic.
         search_parameters = pywrapcp.DefaultRoutingSearchParameters()
