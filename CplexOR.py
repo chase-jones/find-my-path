@@ -96,9 +96,9 @@ def solution(cost_matrix):
 
 #breakpoint -- can check memory (list might already exist)
 
-    #for i in List:
-        #if model.x[i]() != 0:
-            #print(i,'--',model.x[i]())
+    for i in List:
+        if model.x[i]() != 0:
+            print(i,'--',model.x[i]())
 
 ##DESIRED OUTPUT
 
@@ -136,10 +136,10 @@ def solution(cost_matrix):
 
 
     ordered_zones_pd=pd.Series(ordered_zones)
+    #will get rid of (n,1) cost value
+    adjusted_val=model.objective()-(model.c[n,1])
 
-
-
-    return ordered_zones_pd, model.objective()
+    return ordered_zones_pd, adjusted_val
 
 
 
