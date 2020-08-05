@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from scipy.spatial.distance import pdist, squareform
 
 
 def init(bigdf):
@@ -96,14 +97,17 @@ def get_ordered_id_list(df_list_ids_and_zones, df_ordered_zones):
 
 def reduce_loc(df_zones, df_large_pivot):
     zone_list = df_zones['Zone'].tolist()
+    zone_list.sort()
+    # make zone list ascending
     colnames = []
     for x in zone_list:
         if str(x) not in colnames:
             colnames.append(str(x))
     df1 = df_large_pivot[colnames]
     df2 = df1[df1.index.isin(zone_list)]
+    df2.sort_values(by='row ID', ascending=True)
+    # reorder rows to be ascending
     return df2
-
 
 def get_single_desc(df_ids_and_zones,
                     int_zone_number):  # takes in a zone, returns a list of items needed from that zone
