@@ -14,7 +14,7 @@ import psutil
 import os
 
 def mainGG():
-    df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
+    df_zone_pivot = pd.read_csv('New Zone Distanced Pivoted Integers Only.csv', index_col=0)
     df_full_sku_list = pd.read_csv('New Full SKU List.csv')
     array_cart_dictionaries = []
 
@@ -34,22 +34,32 @@ def mainGG():
                 }
                 array_cart_dictionaries.append(single_cart)
 
+    df_roi = pd.DataFrame(columns=['filename', 'cpu %', 'ram %','virtualmemory','MB estimate'])
     for cart in array_cart_dictionaries:
         print(cart.get("File Name"))
         print('solver: google')
         mainGOR(cart)
 
-        print('cpu % used:', psutil.cpu_percent())
+        #psutil.virtual_memory()
+        cpupercent = psutil.cpu_percent()
+        mempercent = psutil.virtual_memory()[2]
+
+        print('cpu % used:', cpupercent)
         print('virtual memory', psutil.virtual_memory()) # physical memory usage
-        print('memory % used:', psutil.virtual_memory()[2])
+        print('memory % used:', mempercent)
 
         pid = os.getpid()
         py = psutil.Process(pid)
         memoryUse = py.memory_info()[0] / 2. ** 30  # memory use in GB...I think
-        print('memory use (GB?):', memoryUse)
+        # print('memory use (GB?):', memoryUse)
+
+        df_roi = df_roi.append(
+            {'filename': cart.get("File Name"), 'cpu %': cpupercent,'ram %': mempercent,'virtualmemory':psutil.virtual_memory(),'MB estimate': memoryUse*1000}, ignore_index=True)
+
+        df_roi.to_csv('GoogleROIValues.csv', index=False)
 
 def mainGOR(cart):
-    cart.update({'Solved OR Zones': gor.solve_tsp(cart.get("Reduced df"))})
+    cart.update({'Solved OR Zones': gor.solve_tsp(cart.get("Reduced df"))[0]})
 
     list1 = cart.get('Solved OR Zones')
     list1.pop(len(list1) - 1)
@@ -58,7 +68,7 @@ def mainGOR(cart):
     cart.update({'Ordered Item list by id': dp.get_ordered_id_list(cart.get('Reduced SKU List'), series1)})
 
 def mainCP():
-    df_zone_pivot = pd.read_csv('Zone Distanced Pivoted.csv', index_col=0)
+    df_zone_pivot = pd.read_csv('New Zone Distanced Pivoted Integers Only.csv', index_col=0)
     df_full_sku_list = pd.read_csv('New Full SKU List.csv')
     array_cart_dictionaries = []
 
@@ -84,16 +94,16 @@ def mainCP():
         mainCOR(cart)
 
         print('cpu % used:', psutil.cpu_percent())
-        print('virtual memory', psutil.virtual_memory()) # physical memory usage
+        # print('virtual memory', psutil.virtual_memory()) # physical memory usage
         print('memory % used:', psutil.virtual_memory()[2])
 
-        pid = os.getpid()
-        py = psutil.Process(pid)
-        memoryUse = py.memory_info()[0] / 2. ** 30  # memory use in GB...I think
-        print('memory use (GB?):', memoryUse)
+        # pid = os.getpid()
+        # py = psutil.Process(pid)
+        # memoryUse = py.memory_info()[0] / 2. ** 30  # memory use in GB...I think
+        # print('memory use (GB?):', memoryUse)
 
 def mainCOR(cart):
-    cart.update({'Solved OR Zones': cor.solution(cart.get("Reduced df 2"))})
+    cart.update({'Solved OR Zones': cor.solution(cart.get("Reduced df 2"))[0]})
 
     list1 = cart.get('Solved OR Zones')
     list1.pop(len(list1) - 1)
