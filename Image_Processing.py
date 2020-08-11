@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+"""
+Translates images into IDing pixels as 1s and 0s.
+
+Right now only works for purely white pixels
+"""
+
 
 import imageio
 import pandas as pd
