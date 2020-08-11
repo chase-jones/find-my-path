@@ -1,3 +1,14 @@
+# This is a sample of A* Pathfinding to follow post-integration OCR integration with 
+"""
+Credit: https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
+Author: @nicholas.w.swift
+
+Integrations: https://cloud.google.com/vision/docs/ocr
+
+Instructions: This python file would be called after all enumerated paths between each of the points within the store. Output would be writted to db matrix
+"""
+
+
 class Node():
     """A node class for A* Pathfinding"""
 
